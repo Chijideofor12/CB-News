@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { FaRegThumbsUp, FaRegComment } from "react-icons/fa";
+import React, { useEffect, useState, useContext } from "react";
+import { NavLink } from "react-router-dom";
+import { FaRegThumbsUp, FaRegThumbsDown, FaRegComment } from "react-icons/fa";
+import { VoteContext } from "../Components/VoteContext";
 
 export const HomePage = () => {
   const [articleLists, setArticleLists] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const limit = 9;
+  const { votedArticles, voteCounts, updateVote } = useContext(VoteContext);
 
   useEffect(() => {
     fetch(
@@ -27,54 +30,86 @@ export const HomePage = () => {
         Articles
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
-        {articleLists.map((article) => (
-          <div
-            key={article.article_id}
-            className="rounded-xl p-8 border border-white/30 hover:translate-y-1 transition-all"
-          >
-            <img
-              src={article.article_img_url}
-              alt={article.title}
-              className="w-full h-48 object-cover rounded-md mb-4"
-            />
+        {articleLists.map((article) => {
+          const currentVotes =
+            voteCounts[article.article_id] !== undefined
+              ? voteCounts[article.article_id]
+              : article.votes;
 
-            <h2 className="text-xl font-bold">{article.title}</h2>
-
-            <div className="mt-2">
-              <p className="text-sm">
-                <span className="font-semibold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-                  Topic:
-                </span>{" "}
-                <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-                  {article.topic}
-                </span>
-              </p>
-              <p className="text-sm">
-                <span className="font-semibold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-                  Author:
-                </span>{" "}
-                <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-                  {article.author}
-                </span>
-              </p>
-            </div>
-
-            <div className="flex items-center space-x-6 mt-4 text-gray-400">
-              <div className="flex items-center space-x-1">
-                <FaRegThumbsUp className="text-lg" />
-                <span>{article.votes}</span>
+          return (
+            <div
+              key={article.article_id}
+              className="rounded-xl p-8 border border-white/30 hover:translate-y-1 transition-all"
+            >
+              <NavLink to={`/article/${article.article_id}`}>
+                <img
+                  src={article.article_img_url}
+                  alt={article.title}
+                  className="w-full h-48 object-cover rounded-md mb-4"
+                />
+              </NavLink>
+              <h2 className="text-xl font-bold">
+                <NavLink to={`/article/${article.article_id}`}>
+                  {article.title}
+                </NavLink>
+              </h2>
+              <div className="mt-2">
+                <p className="text-sm">
+                  <span className="font-semibold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                    Topic:
+                  </span>{" "}
+                  <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                    {article.topic}
+                  </span>
+                </p>
+                <p className="text-sm">
+                  <span className="font-semibold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                    Author:
+                  </span>{" "}
+                  <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                    {article.author}
+                  </span>
+                </p>
               </div>
-
-              <div className="flex items-center space-x-1">
-                <FaRegComment className="text-lg" />
-                <span>{article.comment_count}</span>
+              <div className="flex items-center space-x-6 mt-4 text-gray-400">
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() =>
+                      updateVote(article.article_id, 1, article.votes)
+                    }
+                    className="focus:outline-none cursor-pointer disabled:cursor-not-allowed"
+                    aria-label="Upvote"
+                    disabled={!!votedArticles[article.article_id]}
+                    style={{
+                      opacity: votedArticles[article.article_id] ? 0.5 : 1,
+                    }}
+                  >
+                    <FaRegThumbsUp className="text-lg hover:text-blue-400" />
+                  </button>
+                  <button
+                    onClick={() =>
+                      updateVote(article.article_id, -1, article.votes)
+                    }
+                    className="focus:outline-none cursor-pointer disabled:cursor-not-allowed"
+                    aria-label="Downvote"
+                    disabled={!!votedArticles[article.article_id]}
+                    style={{
+                      opacity: votedArticles[article.article_id] ? 0.5 : 1,
+                    }}
+                  >
+                    <FaRegThumbsDown className="text-lg hover:text-red-400" />
+                  </button>
+                  <span>{currentVotes}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <FaRegComment className="text-lg" />
+                  <span>{article.comment_count}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
-
-      {/* Pagination Controls */}
       <div className="flex justify-center items-center mt-4 space-x-4">
         <button
           disabled={page <= 1}
