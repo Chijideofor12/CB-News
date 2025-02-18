@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ArticleCard } from "../Components/ArticleCard";
 import { Pagination } from "../Components/Pagination";
-import FilterTopicBar from "../Components/filterTopicBar";
+import FilterTopicBar from "../Components/FilterTopicBar";
+import SortBar from "../Components/SortBar";
 
 export const HomePage = () => {
   const [articleLists, setArticleLists] = useState([]);
@@ -11,17 +12,25 @@ export const HomePage = () => {
   const limit = 9;
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const topic = searchParams.get("topic") || "";
+  let topic = searchParams.get("topic") || "";
+  let sortBy = searchParams.get("sort_by") || "created_at";
+  let order = searchParams.get("order") || "desc";
+
+  const allowedSortBy = ["title", "created_at", "votes"];
+  if (!allowedSortBy.includes(sortBy)) {
+    sortBy = "created_at";
+    setSearchParams({ topic, sort_by: "created_at", order });
+  }
 
   useEffect(() => {
     setPage(1);
-  }, [topic]);
+  }, [topic, sortBy, order]);
 
   useEffect(() => {
     let url = `https://backend-nc-news-q8rj.onrender.com/api/articles?limit=${limit}&p=${page}`;
-    if (topic) {
-      url += `&topic=${topic}`;
-    }
+    if (topic) url += `&topic=${topic}`;
+    if (sortBy) url += `&sort_by=${sortBy}`;
+    if (order) url += `&order=${order}`;
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
@@ -29,7 +38,7 @@ export const HomePage = () => {
         setTotalCount(data.total_count || 0);
       })
       .catch((error) => console.error("Error fetching articles:", error));
-  }, [page, topic]);
+  }, [page, topic, sortBy, order]);
 
   const totalPages = Math.ceil(totalCount / limit);
 
@@ -44,7 +53,15 @@ export const HomePage = () => {
   };
 
   const handleTopicChange = (newTopic) => {
-    setSearchParams({ topic: newTopic });
+    setSearchParams({ topic: newTopic, sort_by: sortBy, order: order });
+  };
+
+  const handleSortByChange = (newSortBy) => {
+    setSearchParams({ topic: topic, sort_by: newSortBy, order: order });
+  };
+
+  const handleOrderChange = (newOrder) => {
+    setSearchParams({ topic: topic, sort_by: sortBy, order: newOrder });
   };
 
   return (
@@ -53,7 +70,15 @@ export const HomePage = () => {
         Articles
       </h1>
       <div className="max-w-6xl mx-auto px-4">
-        <FilterTopicBar topic={topic} setTopic={handleTopicChange} />
+        <div className="flex flex-wrap items-center justify-between">
+          <FilterTopicBar topic={topic} setTopic={handleTopicChange} />
+          <SortBar
+            sortBy={sortBy}
+            setSortBy={handleSortByChange}
+            order={order}
+            setOrder={handleOrderChange}
+          />
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
         {articleLists.map((article) => (
