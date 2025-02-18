@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { NavBar } from "./Components/NavBar";
 import { MobileMenu } from "./Components/MobileMenu";
-import { ArticlePage } from "./Pages/ArticlePage";
 import { useState } from "react";
 import { HomePage } from "./Pages/HomePage";
 import { SingleArticle } from "./Pages/SingleArticlePage";
