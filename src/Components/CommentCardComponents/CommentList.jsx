@@ -1,7 +1,12 @@
 import React from "react";
 import CommentItem from "./CommentItem";
 
-const CommentList = ({ comments, userAvatars }) => {
+const CommentList = ({
+  comments,
+  userAvatars,
+  currentUser,
+  onDeleteSuccess,
+}) => {
   return (
     <ul className="space-y-4">
       {comments.map((comment) => (
@@ -9,6 +14,8 @@ const CommentList = ({ comments, userAvatars }) => {
           key={comment.comment_id}
           comment={comment}
           avatarUrl={userAvatars[comment.author]}
+          currentUser={currentUser}
+          onDeleteSuccess={onDeleteSuccess}
         />
       ))}
     </ul>
