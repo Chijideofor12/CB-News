@@ -9,6 +9,7 @@ export const HomePage = () => {
   const [articleLists, setArticleLists] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [fetchError, setFetchError] = useState(null);
   const limit = 9;
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,13 +32,26 @@ export const HomePage = () => {
     if (topic) url += `&topic=${topic}`;
     if (sortBy) url += `&sort_by=${sortBy}`;
     if (order) url += `&order=${order}`;
+
     fetch(url)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error fetching articles");
+        }
+        return response.json();
+      })
       .then((data) => {
         setArticleLists(data.articles || []);
         setTotalCount(data.total_count || 0);
+        setFetchError(null);
       })
-      .catch((error) => console.error("Error fetching articles:", error));
+      .catch((error) => {
+        console.error("Error fetching articles:", error);
+        setArticleLists([]);
+        setFetchError(
+          "There was an error fetching articles. Please try again later."
+        );
+      });
   }, [page, topic, sortBy, order]);
 
   const totalPages = Math.ceil(totalCount / limit);
@@ -57,11 +71,11 @@ export const HomePage = () => {
   };
 
   const handleSortByChange = (newSortBy) => {
-    setSearchParams({ topic: topic, sort_by: newSortBy, order: order });
+    setSearchParams({ topic, sort_by: newSortBy, order });
   };
 
   const handleOrderChange = (newOrder) => {
-    setSearchParams({ topic: topic, sort_by: sortBy, order: newOrder });
+    setSearchParams({ topic, sort_by: sortBy, order: newOrder });
   };
 
   return (
@@ -80,6 +94,9 @@ export const HomePage = () => {
           />
         </div>
       </div>
+      {fetchError && (
+        <p className="text-center text-red-500 mb-4">{fetchError}</p>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
         {articleLists.map((article) => (
           <ArticleCard

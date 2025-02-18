@@ -6,6 +6,7 @@ import { MobileMenu } from "./Components/MobileMenu";
 import { useState } from "react";
 import { HomePage } from "./Pages/HomePage";
 import { SingleArticle } from "./Pages/SingleArticlePage";
+import { ErrorPage } from "./Components/ErrorPage";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,6 +21,7 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/article" element={<HomePage />} />
             <Route path="/article/:article_id" element={<SingleArticle />} />
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </main>
 
