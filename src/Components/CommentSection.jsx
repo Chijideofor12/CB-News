@@ -3,16 +3,18 @@ import CommentsHeader from "../Components/CommentCardComponents/CommentsHeader";
 import CommentForm from "../Components/CommentCardComponents/CommentForm";
 import CommentList from "../Components/CommentCardComponents/CommentList";
 
-const CommentSection = ({ articleId }) => {
+const CommentSection = ({ articleId, currentUser }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userAvatars, setUserAvatars] = useState({});
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [username, setUsername] = useState("");
   const [newComment, setNewComment] = useState("");
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState(null);
   const [postSuccess, setPostSuccess] = useState(null);
+
   useEffect(() => {
     setLoading(true);
     fetch(
@@ -77,9 +79,17 @@ const CommentSection = ({ articleId }) => {
       })
       .catch((err) => {
         console.error(err);
-        setPostError("Unable to post comment. Please enter your details.");
+        setPostError(
+          " Unable to post comment. Please enter details on the form."
+        );
         setPosting(false);
       });
+  };
+
+  const handleDeleteSuccess = (commentId) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment.comment_id !== commentId)
+    );
   };
 
   return (
@@ -100,7 +110,12 @@ const CommentSection = ({ articleId }) => {
       {loading ? (
         <p className="text-white">Loading comments...</p>
       ) : comments.length > 0 ? (
-        <CommentList comments={comments} userAvatars={userAvatars} />
+        <CommentList
+          comments={comments}
+          userAvatars={userAvatars}
+          currentUser={currentUser}
+          onDeleteSuccess={handleDeleteSuccess}
+        />
       ) : (
         <p className="text-white">No comments yet.</p>
       )}
