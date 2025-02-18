@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { FaRegThumbsUp, FaRegThumbsDown, FaRegComment } from "react-icons/fa";
 import { VoteContext } from "../Components/VoteContext";
 
