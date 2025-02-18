@@ -10,6 +10,7 @@ export const SingleArticle = () => {
   const [votes, setVotes] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -19,18 +20,33 @@ export const SingleArticle = () => {
       .then((res) => res.json())
       .then((data) => {
         const fetchedArticle = data.article || data;
+
+        if (!fetchedArticle || !fetchedArticle.article_id) {
+          throw new Error("Article not found");
+        }
+
         setArticle(fetchedArticle);
         setVotes(fetchedArticle.votes);
+        setFetchError(null);
         setLoading(false);
       })
       .catch((err) => {
         console.error(err);
+        setFetchError("Article not found");
         setLoading(false);
       });
   }, [article_id]);
 
   if (loading) return <p className="pt-16 text-center">Loading...</p>;
-
+  if (fetchError)
+    return (
+      <section className="pt-16 text-center text-red-500 font-bold">
+        <p>{fetchError}</p>
+        <NavLink to="/" className="text-blue-300 hover:underline">
+          Back to Home
+        </NavLink>
+      </section>
+    );
   return (
     <section className="min-h-screen pt-16 p-4">
       <h1 className="text-center text-2xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
