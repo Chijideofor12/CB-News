@@ -21,13 +21,14 @@ export const SingleArticle = () => {
         const fetchedArticle = data.article || data;
         setArticle(fetchedArticle);
         setVotes(fetchedArticle.votes);
-        setLoading(false); // Data loaded, remove loading state
+        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
         setLoading(false);
       });
   }, [article_id]);
+
   if (loading) return <p className="pt-16 text-center">Loading...</p>;
 
   return (
@@ -35,7 +36,7 @@ export const SingleArticle = () => {
       <h1 className="text-center text-2xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
         {article.title}
       </h1>
-      <div className="max-w-6xl mx-auto grid grid-cols-1 gap-6 p-8">
+      <div className="max-w-6xl mx-auto p-8">
         <div className="rounded-xl p-8 border border-white/40 hover:translate-y-1 transition-all">
           <NavLink to={`/article/${article.article_id}`}>
             <img
@@ -49,7 +50,7 @@ export const SingleArticle = () => {
             <p className="text-sm">
               <span className="font-semibold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 Topic:
-              </span>
+              </span>{" "}
               <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 {article.topic}
               </span>
@@ -57,18 +58,20 @@ export const SingleArticle = () => {
             <p className="text-sm">
               <span className="font-semibold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 Author:
-              </span>
+              </span>{" "}
               <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 {article.author}
               </span>
             </p>
           </div>
           <div className="flex items-center space-x-6 mt-4 text-gray-400">
-            <VoteComponent
-              articleId={article.article_id}
-              currentVotes={votes}
-              onVoteSuccess={(updatedVotes) => setVotes(updatedVotes)}
-            />
+            <div className="flex items-center space-x-2">
+              <VoteComponent
+                articleId={article.article_id}
+                currentVotes={votes}
+                onVoteSuccess={(updatedVotes) => setVotes(updatedVotes)}
+              />
+            </div>
             <div
               className="flex items-center space-x-1 cursor-pointer"
               onClick={() => setShowComments((prev) => !prev)}
@@ -77,12 +80,12 @@ export const SingleArticle = () => {
               <span>{article.comment_count}</span>
             </div>
           </div>
+          {showComments && (
+            <div className="mt-6">
+              <CommentSection articleId={article.article_id} />
+            </div>
+          )}
         </div>
-        {showComments && (
-          <div className="rounded-xl p-8 border border-white/40 transition-all">
-            <CommentSection articleId={article.article_id} />
-          </div>
-        )}
       </div>
     </section>
   );

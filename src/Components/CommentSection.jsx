@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from "react";
+import CommentsHeader from "../Components/CommentCardComponents/CommentsHeader";
+import CommentForm from "../Components/CommentCardComponents/CommentForm";
+import CommentList from "../Components/CommentCardComponents/CommentList";
 
 const CommentSection = ({ articleId }) => {
   const [comments, setComments] = useState([]);
-  const [loadingComments, setLoadingComments] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [userAvatars, setUserAvatars] = useState({});
-
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [username, setUsername] = useState("");
+  const [newComment, setNewComment] = useState("");
+  const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState(null);
+  const [postSuccess, setPostSuccess] = useState(null);
   useEffect(() => {
-    setLoadingComments(true);
+    setLoading(true);
     fetch(
       `https://backend-nc-news-q8rj.onrender.com/api/articles/${articleId}/comments`
     )
       .then((res) => res.json())
       .then((data) => {
         setComments(data.comments || []);
-        setLoadingComments(false);
+        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
-        setLoadingComments(false);
+        setLoading(false);
       });
   }, [articleId]);
 
@@ -28,7 +36,6 @@ const CommentSection = ({ articleId }) => {
         fetch(`https://backend-nc-news-q8rj.onrender.com/api/users/${author}`)
           .then((res) => res.json())
           .then((data) => {
-            // Adjust property names if your API returns a different structure.
             setUserAvatars((prev) => ({
               ...prev,
               [author]: data.user.avatar_url,
@@ -39,39 +46,61 @@ const CommentSection = ({ articleId }) => {
     });
   }, [comments, userAvatars]);
 
+  const handleAddComment = (e) => {
+    e.preventDefault();
+    setPosting(true);
+    setPostError(null);
+    setPostSuccess(null);
+
+    fetch(
+      `https://backend-nc-news-q8rj.onrender.com/api/articles/${articleId}/comments`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, body: newComment }),
+      }
+    )
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to post comment");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setComments((prevComments) => [data.comment, ...prevComments]);
+        setNewComment("");
+        setUsername("");
+        setShowAddForm(false);
+        setPosting(false);
+        setPostSuccess("Your comment has been posted!");
+        setTimeout(() => setPostSuccess(null), 3000);
+      })
+      .catch((err) => {
+        console.error(err);
+        setPostError("Unable to post comment. Please enter your details.");
+        setPosting(false);
+      });
+  };
+
   return (
     <div className="mt-6 p-4 rounded-xl border border-white/40 bg-transparent">
-      <h2 className="text-lg font-bold mb-4 text-white">Comments</h2>
-      {loadingComments ? (
+      <CommentsHeader onToggleForm={() => setShowAddForm((prev) => !prev)} />
+      {postSuccess && <p className="mb-4 text-green-500">{postSuccess}</p>}
+      {postError && <p className="mb-4 text-red-500">{postError}</p>}
+      {showAddForm && (
+        <CommentForm
+          username={username}
+          newComment={newComment}
+          posting={posting}
+          onUsernameChange={(e) => setUsername(e.target.value)}
+          onCommentChange={(e) => setNewComment(e.target.value)}
+          onSubmit={handleAddComment}
+        />
+      )}
+      {loading ? (
         <p className="text-white">Loading comments...</p>
       ) : comments.length > 0 ? (
-        <ul className="space-y-4">
-          {comments.map((comment) => (
-            <li
-              key={comment.comment_id}
-              className="border-b border-white/30 pb-2"
-            >
-              <div className="flex items-center space-x-2 mb-1">
-                {userAvatars[comment.author] ? (
-                  <img
-                    src={userAvatars[comment.author]}
-                    alt={`${comment.author}'s avatar`}
-                    className="w-6 h-6 rounded-full"
-                  />
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-gray-500" />
-                )}
-                <span className="font-bold text-sm text-white">
-                  {comment.author}
-                </span>
-                <span className="text-xs text-gray-300">
-                  {new Date(comment.created_at).toLocaleString()}
-                </span>
-              </div>
-              <p className="text-sm text-white">{comment.body}</p>
-            </li>
-          ))}
-        </ul>
+        <CommentList comments={comments} userAvatars={userAvatars} />
       ) : (
         <p className="text-white">No comments yet.</p>
       )}
