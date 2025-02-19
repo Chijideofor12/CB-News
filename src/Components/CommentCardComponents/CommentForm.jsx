@@ -1,27 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
+const CommentForm = ({ onSubmit, posting }) => {
+  const [usernameInput, setUsernameInput] = useState("");
+  const [newComment, setNewComment] = useState("");
 
-const CommentForm = ({
-  username,
-  newComment,
-  posting,
-  onUsernameChange,
-  onCommentChange,
-  onSubmit,
-}) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({ usernameInput, newComment });
+    setUsernameInput("");
+    setNewComment("");
+  };
+
   return (
-    <form onSubmit={onSubmit} noValidate className="mb-4 space-y-2">
+    <form onSubmit={handleSubmit} noValidate className="mb-4 space-y-2">
       <input
         type="text"
         placeholder="Your username"
-        value={username}
-        onChange={onUsernameChange}
+        value={usernameInput}
+        onChange={(e) => setUsernameInput(e.target.value)}
         className="w-full p-2 border border-white/40 rounded bg-transparent text-white placeholder-gray-300"
         required
       />
       <textarea
         placeholder="Your comment"
         value={newComment}
-        onChange={onCommentChange}
+        onChange={(e) => setNewComment(e.target.value)}
         className="w-full p-2 border border-white/40 rounded bg-transparent text-white placeholder-gray-300"
         required
       />

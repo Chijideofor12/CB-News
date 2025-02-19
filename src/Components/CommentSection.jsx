@@ -7,9 +7,6 @@ const CommentSection = ({ articleId, currentUser }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userAvatars, setUserAvatars] = useState({});
-
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [username, setUsername] = useState("");
   const [newComment, setNewComment] = useState("");
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState(null);
@@ -48,8 +45,7 @@ const CommentSection = ({ articleId, currentUser }) => {
     });
   }, [comments, userAvatars]);
 
-  const handleAddComment = (e) => {
-    e.preventDefault();
+  const handleAddComment = ({ usernameInput, newComment }) => {
     setPosting(true);
     setPostError(null);
     setPostSuccess(null);
@@ -59,7 +55,7 @@ const CommentSection = ({ articleId, currentUser }) => {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, body: newComment }),
+        body: JSON.stringify({ username: usernameInput, body: newComment }),
       }
     )
       .then((res) => {
@@ -71,20 +67,21 @@ const CommentSection = ({ articleId, currentUser }) => {
       .then((data) => {
         setComments((prevComments) => [data.comment, ...prevComments]);
         setNewComment("");
-        setUsername("");
-        setShowAddForm(false);
         setPosting(false);
+        setShowAddForm(false);
         setPostSuccess("Your comment has been posted!");
         setTimeout(() => setPostSuccess(null), 3000);
       })
       .catch((err) => {
         console.error(err);
         setPostError(
-          " Unable to post comment. Please enter details on the form."
+          "Unable to post comment. Please enter details on the form."
         );
         setPosting(false);
       });
   };
+
+  const [showAddForm, setShowAddForm] = useState(false);
 
   const handleDeleteSuccess = (commentId) => {
     setComments((prevComments) =>
@@ -98,14 +95,7 @@ const CommentSection = ({ articleId, currentUser }) => {
       {postSuccess && <p className="mb-4 text-green-500">{postSuccess}</p>}
       {postError && <p className="mb-4 text-red-500">{postError}</p>}
       {showAddForm && (
-        <CommentForm
-          username={username}
-          newComment={newComment}
-          posting={posting}
-          onUsernameChange={(e) => setUsername(e.target.value)}
-          onCommentChange={(e) => setNewComment(e.target.value)}
-          onSubmit={handleAddComment}
-        />
+        <CommentForm onSubmit={handleAddComment} posting={posting} />
       )}
       {loading ? (
         <p className="text-white">Loading comments...</p>

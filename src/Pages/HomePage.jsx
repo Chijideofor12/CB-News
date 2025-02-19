@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { ArticleCard } from "../Components/ArticleCard";
 import { Pagination } from "../Components/Pagination";
 import FilterTopicBar from "../Components/FilterTopicBar";
@@ -10,6 +10,7 @@ export const HomePage = () => {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [fetchError, setFetchError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const limit = 9;
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,6 +34,7 @@ export const HomePage = () => {
     if (sortBy) url += `&sort_by=${sortBy}`;
     if (order) url += `&order=${order}`;
 
+    setLoading(true);
     fetch(url)
       .then((response) => {
         if (!response.ok) {
@@ -44,6 +46,7 @@ export const HomePage = () => {
         setArticleLists(data.articles || []);
         setTotalCount(data.total_count || 0);
         setFetchError(null);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching articles:", error);
@@ -51,6 +54,7 @@ export const HomePage = () => {
         setFetchError(
           "There was an error fetching articles. Please try again later."
         );
+        setLoading(false);
       });
   }, [page, topic, sortBy, order]);
 
@@ -84,7 +88,7 @@ export const HomePage = () => {
         Articles
       </h1>
       <div className="max-w-6xl mx-auto px-4">
-        <div className="flex flex-wrap items-center justify-between">
+        <div className="flex items-center justify-center space-x-8">
           <FilterTopicBar topic={topic} setTopic={handleTopicChange} />
           <SortBar
             sortBy={sortBy}
@@ -97,15 +101,22 @@ export const HomePage = () => {
       {fetchError && (
         <p className="text-center text-red-500 mb-4">{fetchError}</p>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
-        {articleLists.map((article) => (
-          <ArticleCard
-            key={article.article_id}
-            article={article}
-            onVoteSuccess={updateArticleVote}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex flex-col justify-center items-center min-h-[200px]">
+          <div className="loader mb-4"></div>
+          <p className="text-white mt-2">Please wait...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
+          {articleLists.map((article) => (
+            <ArticleCard
+              key={article.article_id}
+              article={article}
+              onVoteSuccess={updateArticleVote}
+            />
+          ))}
+        </div>
+      )}
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </section>
   );
