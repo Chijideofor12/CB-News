@@ -3,7 +3,7 @@ import { NavLink } from "react-router";
 
 export const ErrorPage = () => {
   return (
-    <section className="min-h-screen pt-16 flex flex-col items-center justify-center bg-gray-900 text-white">
+    <section className="min-h-screen pt-16 flex flex-col items-center justify-center bg-[rgba(10,10,10,0.8)] text-white">
       <h1 className="text-5xl font-bold mb-4">404</h1>
       <p className="text-xl mb-8">Page Not Found</p>
       <NavLink

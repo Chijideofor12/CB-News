@@ -1,5 +1,5 @@
 import "./index.css";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router";
 import "./App.css";
 import { NavBar } from "./Components/NavBar";
 import { MobileMenu } from "./Components/MobileMenu";
@@ -7,6 +7,10 @@ import { useState } from "react";
 import { HomePage } from "./Pages/HomePage";
 import { SingleArticle } from "./Pages/SingleArticlePage";
 import { ErrorPage } from "./Components/ErrorPage";
+import LoginPage from "./Pages/LoginPage";
+import ProfilePage from "./Pages/ProfilePage";
+import UserPage from "./Pages/UserPage";
+import { Footer } from "./Pages/FooterPage";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,11 +25,14 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/article" element={<HomePage />} />
             <Route path="/article/:article_id" element={<SingleArticle />} />
+            <Route path="/login" element={<LoginPage />}></Route>
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/users" element={<UserPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </main>
 
-        <footer />
+        <Footer />
       </section>
     </>
   );

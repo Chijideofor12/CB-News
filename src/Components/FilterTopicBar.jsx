@@ -1,6 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const FilterTopicBar = ({ topic, setTopic }) => {
+  const [topics, setTopics] = useState([]);
+
+  useEffect(() => {
+    fetch("https://backend-nc-news-q8rj.onrender.com/api/topics")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch topics");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setTopics(data.topics || []);
+      })
+      .catch((err) => {
+        console.error("Error fetching topics:", err);
+      });
+  }, []);
+
   return (
     <div className="mt-4 flex items-center">
       <label
@@ -16,9 +34,11 @@ const FilterTopicBar = ({ topic, setTopic }) => {
         className="w-56 p-3 text-lg rounded bg-transparent border border-white/40 text-white"
       >
         <option value="">All</option>
-        <option value="coding">Coding</option>
-        <option value="cooking">Cooking</option>
-        <option value="football">Football</option>
+        {topics.map((t) => (
+          <option key={t.slug} value={t.slug}>
+            {t.slug}
+          </option>
+        ))}
       </select>
     </div>
   );
