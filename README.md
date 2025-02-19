@@ -4,7 +4,7 @@ CB-News is a dynamic news application built using React on the frontend and Node
 
 ## Deployed Version
 
-Check out the live application at:
+Check out the live application at: https://cb-news-three.vercel.app/home
 
 ## General Info
 
