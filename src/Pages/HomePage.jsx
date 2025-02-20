@@ -84,40 +84,55 @@ export const HomePage = () => {
 
   return (
     <section className="min-h-screen pt-16">
-      <h1 className="text-center text-2xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-        Articles
-      </h1>
-      <div className="w-full max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <FilterTopicBar topic={topic} setTopic={handleTopicChange} />
-          <SortBar
-            sortBy={sortBy}
-            setSortBy={handleSortByChange}
-            order={order}
-            setOrder={handleOrderChange}
-          />
-        </div>
-      </div>
-      {fetchError && (
-        <p className="text-center text-red-500 mb-4">{fetchError}</p>
-      )}
-      {loading ? (
-        <div className="flex flex-col justify-center items-center min-h-[200px]">
-          <div className="loader mb-4"></div>
-          <p className="text-white mt-2">Please wait...</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
-          {articleLists.map((article) => (
-            <ArticleCard
-              key={article.article_id}
-              article={article}
-              onVoteSuccess={updateArticleVote}
+      <header>
+        <h1 className="text-center text-2xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+          Articles
+        </h1>
+      </header>
+      <main>
+        <div className="w-full max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <FilterTopicBar topic={topic} setTopic={handleTopicChange} />
+            <SortBar
+              sortBy={sortBy}
+              setSortBy={handleSortByChange}
+              order={order}
+              setOrder={handleOrderChange}
             />
-          ))}
+          </div>
         </div>
-      )}
-      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        {fetchError && (
+          <p role="alert" className="text-center text-red-500 mb-4">
+            {fetchError}
+          </p>
+        )}
+        {loading ? (
+          <div
+            className="flex flex-col justify-center items-center min-h-[200px]"
+            role="status"
+          >
+            <div className="loader mb-4" aria-hidden="true"></div>
+            <p className="text-white mt-2">Please wait...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
+            {articleLists.map((article) => (
+              <ArticleCard
+                key={article.article_id}
+                article={article}
+                onVoteSuccess={updateArticleVote}
+              />
+            ))}
+          </div>
+        )}
+        <nav aria-label="Pagination">
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
+        </nav>
+      </main>
     </section>
   );
 };

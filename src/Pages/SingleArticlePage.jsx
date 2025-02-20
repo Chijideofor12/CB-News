@@ -61,10 +61,12 @@ export const SingleArticle = () => {
 
   return (
     <section className="min-h-screen pt-16 p-4">
-      <h1 className="text-center text-2xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-        {article.title}
-      </h1>
-      <div className="max-w-6xl mx-auto grid grid-cols-1 gap-6 p-8">
+      <header>
+        <h1 className="text-center text-2xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+          {article.title}
+        </h1>
+      </header>
+      <main className="max-w-6xl mx-auto grid grid-cols-1 gap-6 p-8">
         <div className="rounded-xl p-8 border border-white/30 hover:translate-y-1 transition-all">
           <NavLink to={`/article/${article.article_id}`}>
             <img
@@ -76,17 +78,17 @@ export const SingleArticle = () => {
           <p className="mb-4 text-white">{article.body}</p>
           <div className="mt-2">
             <p className="text-sm">
-              <span className="font-semibold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              <strong className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 Topic:
-              </span>{" "}
+              </strong>{" "}
               <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 {article.topic}
               </span>
             </p>
             <p className="text-sm">
-              <span className="font-semibold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              <strong className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 Author:
-              </span>{" "}
+              </strong>{" "}
               <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 {article.author}
               </span>
@@ -115,7 +117,7 @@ export const SingleArticle = () => {
             currentUser="cooljmessy"
           />
         )}
-      </div>
+      </main>
     </section>
   );
 };

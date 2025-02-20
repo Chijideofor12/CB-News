@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaRegThumbsUp, FaRegThumbsDown } from "react-icons/fa";
 
+const votedArticles = {};
+
 export const VoteComponent = ({ articleId, currentVotes, onVoteSuccess }) => {
-  const [hasVoted, setHasVoted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [localVotes, setLocalVotes] = useState(currentVotes);
+  const [hasVoted, setHasVoted] = useState(!!votedArticles[articleId]);
+
+  useEffect(() => {
+    setLocalVotes(currentVotes);
+  }, [currentVotes]);
 
   const handleVote = (increment) => {
     if (hasVoted || loading) return;
@@ -23,14 +30,23 @@ export const VoteComponent = ({ articleId, currentVotes, onVoteSuccess }) => {
         return res.json();
       })
       .then((data) => {
+        console.log("API response:", data);
+        const updatedVotes =
+          data.article && typeof data.article.votes === "number"
+            ? data.article.votes
+            : localVotes + increment;
+        console.log("Updated votes:", updatedVotes);
+        setLocalVotes(updatedVotes);
         setHasVoted(true);
+        // Mark this article as voted globally
+        votedArticles[articleId] = true;
         setLoading(false);
         if (onVoteSuccess) {
-          onVoteSuccess(data.article.votes);
+          onVoteSuccess(updatedVotes);
         }
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Vote error:", err);
         setLoading(false);
       });
   };
@@ -53,7 +69,7 @@ export const VoteComponent = ({ articleId, currentVotes, onVoteSuccess }) => {
       >
         <FaRegThumbsDown className="text-lg hover:text-red-400" />
       </button>
-      <span>{currentVotes}</span>
+      <span>{localVotes}</span>
     </div>
   );
 };
