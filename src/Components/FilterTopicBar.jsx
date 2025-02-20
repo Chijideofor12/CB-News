@@ -1,4 +1,3 @@
-// src/Components/FilterTopicBar.jsx
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 
@@ -14,7 +13,6 @@ const FilterTopicBar = ({ topic, setTopic }) => {
         return res.json();
       })
       .then((data) => {
-        // Map topics to react-select options
         const options = (data.topics || []).map((t) => ({
           value: t.slug,
           label: t.slug.charAt(0).toUpperCase() + t.slug.slice(1),
@@ -25,11 +23,8 @@ const FilterTopicBar = ({ topic, setTopic }) => {
         console.error("Error fetching topics:", err);
       });
   }, []);
-
-  // Find the currently selected option
   const selectedOption = topics.find((opt) => opt.value === topic) || null;
 
-  // Custom styles for react-select
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -62,8 +57,10 @@ const FilterTopicBar = ({ topic, setTopic }) => {
   };
 
   return (
-    <div className="mt-4 flex items-center">
+    <fieldset className="mt-4 flex items-center" aria-labelledby="topic-label">
+      <legend className="sr-only">Filter by Topic</legend>
       <label
+        id="topic-label"
         htmlFor="topic-select"
         className="text-white font-bold mr-6 text-lg"
       >
@@ -78,7 +75,7 @@ const FilterTopicBar = ({ topic, setTopic }) => {
         placeholder="All"
         className="w-56"
       />
-    </div>
+    </fieldset>
   );
 };
 
