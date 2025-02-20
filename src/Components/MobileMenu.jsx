@@ -1,6 +1,13 @@
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 
 export const MobileMenu = ({ menuOpen, setMenuOpen }) => {
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    setCurrentUser(localStorage.getItem("currentUser"));
+  }, [menuOpen]);
+
   return (
     <div
       className={`fixed top-0 left-0 w-full z-40 bg-[rgba(10,10,10,0.8)] transition-all duration-300 ease-in-out ${
@@ -16,37 +23,75 @@ export const MobileMenu = ({ menuOpen, setMenuOpen }) => {
       >
         &times;
       </button>
-      <section className="absolute top-21 right-12 flex flex-col items-end space-y-4">
+      <section className="absolute top-[84px] right-4 flex flex-col items-end space-y-4">
         <NavLink
           to="/home"
           onClick={() => setMenuOpen(false)}
-          className="text-2xl font-semibold text-white transform transition-transform duration-300"
+          className="text-2xl font-semibold text-white"
         >
           Home
         </NavLink>
-        <NavLink
-          to="/login"
-          onClick={() => setMenuOpen(false)}
-          className="text-2xl font-semibold text-white transform transition-transform duration-300"
-        >
-          Login
-        </NavLink>
-
-        <NavLink
-          to="/NewArticle"
-          onClick={() => setMenuOpen(false)}
-          className="text-2xl font-semibold text-white transform transition-transform duration-300"
-        >
-          New Article
-        </NavLink>
-        <NavLink
-          to="/Users"
-          onClick={() => setMenuOpen(false)}
-          className="text-2xl font-semibold text-white transform transition-transform duration-300"
-        >
-          Users
-        </NavLink>
+        {currentUser ? (
+          <>
+            <NavLink
+              to="/NewArticle"
+              onClick={() => setMenuOpen(false)}
+              className="text-2xl font-semibold text-white"
+            >
+              New Article
+            </NavLink>
+            <NavLink
+              to="/users"
+              onClick={() => setMenuOpen(false)}
+              className="text-2xl font-semibold text-white"
+            >
+              Users
+            </NavLink>
+            <NavLink
+              to="/profile"
+              onClick={() => setMenuOpen(false)}
+              className="text-2xl font-semibold text-white"
+            >
+              Profile
+            </NavLink>
+            <button
+              onClick={() => {
+                localStorage.removeItem("currentUser");
+                setMenuOpen(false);
+              }}
+              className="text-2xl font-semibold text-white focus:outline-none"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <NavLink
+              to="/login"
+              onClick={() => setMenuOpen(false)}
+              className="text-2xl font-semibold text-white"
+            >
+              Login
+            </NavLink>
+            <NavLink
+              to="/NewArticle"
+              onClick={() => setMenuOpen(false)}
+              className="text-2xl font-semibold text-white"
+            >
+              New Article
+            </NavLink>
+            <NavLink
+              to="/users"
+              onClick={() => setMenuOpen(false)}
+              className="text-2xl font-semibold text-white"
+            >
+              Users
+            </NavLink>
+          </>
+        )}
       </section>
     </div>
   );
 };
+
+export default MobileMenu;

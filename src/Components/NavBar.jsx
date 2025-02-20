@@ -46,14 +46,13 @@ export const NavBar = ({ menuOpen, setMenuOpen }) => {
 
   return (
     <nav className="fixed top-0 w-full z-40 bg-[rgba(10,10,10,0.8)] backdrop-blur-lg border-b-2 border-white/30 shadow-lg">
-      <div className="w-full pl-4 pr-16">
-        <section className="flex items-center h-16">
+      <div className="w-full pl-4 pr-4 md:pr-16">
+        <section className="flex flex-wrap items-center h-16">
           <NavLink to="/" className="font-mono text-xl font-bold text-white">
             CB<span className="text-blue-500">.News</span>
           </NavLink>
           <div className="flex-1" />
-
-          {/* Hamburger menu for The mobile */}
+          {/* Hamburger menu for mobile */}
           <div
             className="text-2xl relative cursor-pointer z-40 md:hidden"
             onClick={() => setMenuOpen((prev) => !prev)}
@@ -141,3 +140,5 @@ export const NavBar = ({ menuOpen, setMenuOpen }) => {
     </nav>
   );
 };
+
+export default NavBar;

@@ -41,7 +41,9 @@ const LoginPage = () => {
   return (
     <section className="min-h-screen pt-15 flex justify-center items-center bg-[rgba(10,10,10,0.8)] text-white">
       <div className="w-full max-w-xl p-16 border border-white/30 rounded-xl bg-gray-800 shadow-lg">
-        <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+          Login
+        </h1>
         <form onSubmit={handleSubmit} noValidate>
           {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
           <div className="mb-6">

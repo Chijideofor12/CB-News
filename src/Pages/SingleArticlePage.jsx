@@ -70,7 +70,7 @@ export const SingleArticle = () => {
             <img
               src={article.article_img_url}
               alt={article.title}
-              className="w-full h-64 object-cover rounded-md mb-4"
+              className="w-full h-auto max-h-96 object-contain rounded-md mb-4"
             />
           </NavLink>
           <p className="mb-4 text-white">{article.body}</p>
@@ -92,7 +92,7 @@ export const SingleArticle = () => {
               </span>
             </p>
           </div>
-          <div className="flex items-center space-x-6 mt-4 text-gray-400">
+          <div className="flex flex-wrap items-center gap-4 mt-4 text-gray-400">
             <div className="flex items-center space-x-2">
               <VoteComponent
                 articleId={article.article_id}
