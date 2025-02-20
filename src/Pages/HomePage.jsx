@@ -87,8 +87,8 @@ export const HomePage = () => {
       <h1 className="text-center text-2xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
         Articles
       </h1>
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-center justify-center space-x-8">
+      <div className="w-full max-w-6xl mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <FilterTopicBar topic={topic} setTopic={handleTopicChange} />
           <SortBar
             sortBy={sortBy}
