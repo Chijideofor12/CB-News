@@ -34,6 +34,6 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # Run Playwright tests
+      # Run Playwright tests with xvfb for headed mode
       - name: Run Playwright tests
-        run: npx playwright test
+        run: xvfb-run --auto-servernum -- npx playwright test
