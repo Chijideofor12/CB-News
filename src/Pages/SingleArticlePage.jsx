@@ -3,6 +3,7 @@ import { useParams, NavLink, useLocation } from "react-router";
 import { FaRegComment } from "react-icons/fa";
 import { VoteComponent } from "../Components/VoteComponent";
 import CommentSection from "../Components/CommentSection";
+import DeleteArticleButton from "../Components/ArticleCardComponents/DeleteArticleButton";
 
 export const SingleArticle = () => {
   const { article_id } = useParams();
@@ -109,6 +110,8 @@ export const SingleArticle = () => {
               <FaRegComment className="text-lg" />
               <span>{article.comment_count}</span>
             </div>
+            {/* Use the separated DeleteArticleButton component */}
+            <DeleteArticleButton articleId={article.article_id} />
           </div>
         </div>
         {showComments && (
